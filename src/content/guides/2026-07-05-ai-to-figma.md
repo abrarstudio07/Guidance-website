@@ -1,7 +1,7 @@
 ---
 title: "Turn AI Prompts into Editable Figma Designs"
 description: "Use AI to generate Figma Scripter code that builds auto-layouted UI components directly on the canvas."
-pubDate: 2026-07-05
+pubDate: 2026-07-02
 category: design
 tags:
   - ai-tools
