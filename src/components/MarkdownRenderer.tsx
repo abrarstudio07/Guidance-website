@@ -4,8 +4,13 @@ interface MarkdownRendererProps {
   content: string;
 }
 
+const COLLAPSED_HEIGHT = 200;
+
 function CodeBlock({ lang, code }: { lang: string; code: string }) {
   const [copied, setCopied] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  const preRef = useRef<HTMLPreElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const handleCopy = useCallback(() => {
@@ -15,6 +20,18 @@ function CodeBlock({ lang, code }: { lang: string; code: string }) {
       timerRef.current = setTimeout(() => setCopied(false), 2000);
     });
   }, [code]);
+
+  // Check if content overflows the collapsed height
+  const measuredRef = useCallback(
+    (node: HTMLPreElement | null) => {
+      if (node) {
+        (preRef as React.MutableRefObject<HTMLPreElement>).current = node;
+        setOverflows(node.scrollHeight > COLLAPSED_HEIGHT);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [code]
+  );
 
   return (
     <div className="code-block-wrapper">
@@ -43,12 +60,41 @@ function CodeBlock({ lang, code }: { lang: string; code: string }) {
           )}
         </button>
       </div>
-      <pre className="code-block">
-        <code
-          className={`language-${lang || "text"}`}
-          dangerouslySetInnerHTML={{ __html: escapeHtml(code) }}
-        />
-      </pre>
+      <div className="code-block-body">
+        <pre
+          ref={measuredRef}
+          className={`code-block ${expanded ? "code-block--expanded" : "code-block--collapsed"}`}
+          style={!expanded ? { maxHeight: `${COLLAPSED_HEIGHT}px` } : undefined}
+        >
+          <code
+            className={`language-${lang || "text"}`}
+            dangerouslySetInnerHTML={{ __html: escapeHtml(code) }}
+          />
+        </pre>
+        {!expanded && overflows && <div className="code-block-fade" />}
+      </div>
+      {overflows && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="code-block-toggle"
+        >
+          {expanded ? (
+            <>
+              Show less
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="18 15 12 9 6 15" />
+              </svg>
+            </>
+          ) : (
+            <>
+              Show more
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </>
+          )}
+        </button>
+      )}
     </div>
   );
 }
