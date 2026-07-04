@@ -54,7 +54,7 @@ Open the [LMSYS Arena direct chat](https://arena.ai/text/direct), paste the copi
 
 ### 3. Send the Figma scripting prompt
 
-Send the master scripting prompt that tells the AI how to write production-ready Figma Scripter code. Key constraints:
+Copy the master scripting prompt below that tells the AI how to write production-ready Figma Scripter code. Key constraints:
 
 ```markdown
 You are an elite AI Product Designer and Figma Scripter expert. Your job is to generate production-ready JavaScript or TypeScript for the Figma Scripter plugin, while thinking like a high-end design lead.
